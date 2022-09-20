@@ -5,7 +5,7 @@ const width = 1100 ,
       height = 845 ;
 
 // append the svg object to the body of the page
-const svg = d3.select("body")
+const svg = d3.select("#tile-map")
               .append("svg")
               .attr("width", width )
               .attr("height", height )
@@ -57,40 +57,42 @@ d3.json("https://cdn.freecodecamp.org/testable-projects-fcc/data/tree_map/video-
 
 //text labels
 
-svg.append("g")
-  .selectAll("text")
-  .data(root.leaves())
-  .join("text")
-  .attr("data-name", d => d.data.name)
-  .attr("data-category", d => d.data.category)
-  .attr("data-value", d => d.data.value)
-  .attr('x', function (d) { return d.x0 + 5; })
-  .attr('y', function (d) { return d.y0 + 23; })
-  .style("fill", "black")
-  .text(d => d.data.name )
-  
- 
 d3.select("body")
   .append("div")
-  .attr("id", "tooltip")      
-     
+  .attr("id", "text-labels")
 
+d3.select("#text-labels")
+  .selectAll("div")
+  .data(root.leaves())
+  .enter()
+  .append("div")
+  .attr("class", "label")
+  .attr("data-value", d => d.data.value)
+  .text(d => d.data.name)
+  .style('left', function (d) { return (d.x0 + 3) + "px"; })
+  .style('top', function (d) { return (d.y0 + 3 )+ "px"; })
+  .style('width', function (d) { return (d.x1 - d.x0 - 10)+"px"; })
+  .style('height', function (d) { return (d.y1 - d.y0 - 3)+"px"; })
+   
 //tooltip
-    d3.selectAll(".tile")
-        .on("mouseover", (e, d) => {
-       
+
+d3.select("#tile-map")
+  .append("div")
+  .attr("id", "tooltip")   
+
+d3.selectAll(".label")
+  .on("mousemove", (e, d) => {
             d3.select("#tooltip")
               .text(formulate(d))
-              .style("opacity", "0.8")
-              .style("left", e.pageX + "px")
-              .style("top", e.pageY + "px")
+              .style("opacity", "0.9")
               .attr("data-value", d.data.value)
-                   
-        })
-        .on("mouseout", () => {
+                .style("left", (e.pageX - 90 ) + "px")
+                .style("top", (e.pageY - 150 ) + "px")
+    })
+  .on("mouseout", () => {
           d3.select("#tooltip")
               .style("opacity", "0")
-        })
+    })
 
                            
 //legend
